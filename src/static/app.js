@@ -571,9 +571,9 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
       <div class="share-buttons">
         <span class="share-label">Share:</span>
-        <button class="share-btn share-twitter" data-activity="${name}" data-description="${details.description}" title="Share on X (Twitter)">𝕏</button>
-        <button class="share-btn share-facebook" data-activity="${name}" title="Share on Facebook">f</button>
-        <button class="share-btn share-copy" data-activity="${name}" title="Copy link">🔗</button>
+        <button class="share-btn share-twitter" data-activity="${name}" data-description="${details.description}" title="Share on X (Twitter)" aria-label="Share ${name} on X (Twitter)">𝕏</button>
+        <button class="share-btn share-facebook" data-activity="${name}" title="Share on Facebook" aria-label="Share ${name} on Facebook">f</button>
+        <button class="share-btn share-copy" data-activity="${name}" title="Copy link" aria-label="Copy link to ${name}">🔗</button>
       </div>
     `;
 
@@ -639,6 +639,11 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
         button.title = originalTitle;
         button.classList.remove("share-copy-success");
+      }, 2000);
+    }).catch(() => {
+      button.title = "Copy failed";
+      setTimeout(() => {
+        button.title = "Copy link";
       }, 2000);
     });
   }
