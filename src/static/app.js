@@ -612,6 +612,12 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
       </div>
+      <div class="share-buttons">
+        <span class="share-label">Share:</span>
+        <button class="share-btn share-twitter" data-activity="${name}" data-description="${details.description}" title="Share on X (Twitter)" aria-label="Share ${name} on X (Twitter)">𝕏</button>
+        <button class="share-btn share-facebook" data-activity="${name}" title="Share on Facebook" aria-label="Share ${name} on Facebook">f</button>
+        <button class="share-btn share-copy" data-activity="${name}" title="Copy link" aria-label="Copy link to ${name}">🔗</button>
+      </div>
     `;
 
     // Add click handlers for delete buttons
@@ -630,7 +636,59 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    // Add click handlers for share buttons
+    activityCard.querySelector(".share-twitter").addEventListener("click", () => {
+      shareOnTwitter(name, details.description);
+    });
+    activityCard.querySelector(".share-facebook").addEventListener("click", () => {
+      shareOnFacebook(name);
+    });
+    activityCard.querySelector(".share-copy").addEventListener("click", (event) => {
+      copyActivityLink(name, event.currentTarget);
+    });
+
     activitiesList.appendChild(activityCard);
+  }
+
+  // Build a shareable URL for an activity
+  function getActivityUrl(activityName) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("activity", activityName);
+    return url.toString();
+  }
+
+  // Share an activity on X (Twitter)
+  function shareOnTwitter(activityName, description) {
+    const activityUrl = getActivityUrl(activityName);
+    const text = `Check out "${activityName}" at Mergington High School! ${description}`;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(activityUrl)}`;
+    window.open(twitterUrl, "_blank", "noopener,noreferrer");
+  }
+
+  // Share an activity on Facebook
+  function shareOnFacebook(activityName) {
+    const activityUrl = getActivityUrl(activityName);
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(activityUrl)}`;
+    window.open(facebookUrl, "_blank", "noopener,noreferrer");
+  }
+
+  // Copy the activity link to the clipboard
+  function copyActivityLink(activityName, button) {
+    const activityUrl = getActivityUrl(activityName);
+    navigator.clipboard.writeText(activityUrl).then(() => {
+      const originalTitle = button.title;
+      button.title = "Copied!";
+      button.classList.add("share-copy-success");
+      setTimeout(() => {
+        button.title = originalTitle;
+        button.classList.remove("share-copy-success");
+      }, 2000);
+    }).catch(() => {
+      button.title = "Copy failed";
+      setTimeout(() => {
+        button.title = "Copy link";
+      }, 2000);
+    });
   }
 
   // Event listeners for search and filter
