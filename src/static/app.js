@@ -28,24 +28,38 @@ document.addEventListener("DOMContentLoaded", () => {
   // Dark mode toggle
   const darkModeToggle = document.getElementById("dark-mode-toggle");
 
-  function applyDarkMode(isDark) {
-    if (isDark) {
-      document.body.classList.add("dark-mode");
-      darkModeToggle.textContent = "☀️ Light Mode";
-    } else {
-      document.body.classList.remove("dark-mode");
-      darkModeToggle.textContent = "🌙 Dark Mode";
+  if (darkModeToggle) {
+    function applyDarkMode(isDark) {
+      if (isDark) {
+        document.body.classList.add("dark-mode");
+        darkModeToggle.textContent = "☀️ Light Mode";
+        darkModeToggle.setAttribute("aria-label", "Switch to light mode");
+      } else {
+        document.body.classList.remove("dark-mode");
+        darkModeToggle.textContent = "🌙 Dark Mode";
+        darkModeToggle.setAttribute("aria-label", "Switch to dark mode");
+      }
     }
+
+    // Load saved preference
+    let savedDarkMode = false;
+    try {
+      savedDarkMode = localStorage.getItem("darkMode") === "true";
+    } catch (e) {
+      // localStorage not available
+    }
+    applyDarkMode(savedDarkMode);
+
+    darkModeToggle.addEventListener("click", () => {
+      const isDark = !document.body.classList.contains("dark-mode");
+      try {
+        localStorage.setItem("darkMode", isDark);
+      } catch (e) {
+        // localStorage not available
+      }
+      applyDarkMode(isDark);
+    });
   }
-
-  // Load saved preference
-  applyDarkMode(localStorage.getItem("darkMode") === "true");
-
-  darkModeToggle.addEventListener("click", () => {
-    const isDark = !document.body.classList.contains("dark-mode");
-    localStorage.setItem("darkMode", isDark);
-    applyDarkMode(isDark);
-  });
 
   // Activity categories with corresponding colors
   const activityTypes = {
